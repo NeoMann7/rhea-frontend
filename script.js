@@ -1,15 +1,10 @@
 const form = document.getElementById("responseForm");
 const formStatus = document.getElementById("formStatus");
-const responsesContainer = document.getElementById("responses");
 const responseCount = document.getElementById("responseCount");
 const countrySelect = document.getElementById("countrySelect");
 const qrInput = document.getElementById("qrInput");
 const qrImage = document.getElementById("qrImage");
 const generateQrBtn = document.getElementById("generateQrBtn");
-const apiBaseInput = document.getElementById("apiBaseInput");
-const saveApiBaseBtn = document.getElementById("saveApiBaseBtn");
-const apiBaseStatus = document.getElementById("apiBaseStatus");
-
 const defaultApiBase = (window.APP_CONFIG && window.APP_CONFIG.apiBaseUrl) || "";
 const storedApiBase = localStorage.getItem("apiBaseUrl") || "";
 let apiBaseUrl = (storedApiBase || defaultApiBase || "").replace(/\/$/, "");
@@ -45,9 +40,6 @@ function renderResponses(submissions) {
   responseCount.textContent = String(submissions.length);
   clearMarkers();
 
-  responsesContainer.innerHTML = "";
-  const latest = submissions.slice(0, 12);
-
   const groupedByLocation = new Map();
   for (const item of submissions) {
     const key = `${item.latitude},${item.longitude}`;
@@ -70,20 +62,6 @@ function renderResponses(submissions) {
     markers.push(marker);
   }
 
-  for (const item of latest) {
-    const div = document.createElement("div");
-    div.className = "response-card";
-    div.innerHTML = `
-      <h3>${escapeHtml(item.name || "Anonymous")} - ${escapeHtml(item.country)}</h3>
-      <p><strong>Institution:</strong> ${escapeHtml(item.institution)}</p>
-      <p><strong>Challenge:</strong> ${escapeHtml(item.challenge)}</p>
-      <p><strong>Youth role:</strong> ${escapeHtml(item.youthRole)}</p>
-      <p><strong>Solution:</strong> ${escapeHtml(item.youthSolution)}</p>
-      <p><strong>Support needed:</strong> ${escapeHtml(item.supportNeeded)}</p>
-      <p><strong>One word:</strong> ${escapeHtml(item.oneWord)}</p>
-    `;
-    responsesContainer.appendChild(div);
-  }
 }
 
 async function fetchSubmissions() {
@@ -150,24 +128,6 @@ generateQrBtn.addEventListener("click", () => {
   qrImage.src = qrUrl;
   qrImage.style.display = "block";
 });
-
-if (apiBaseInput && saveApiBaseBtn && apiBaseStatus) {
-  apiBaseInput.value = apiBaseUrl;
-  saveApiBaseBtn.addEventListener("click", async () => {
-    const next = apiBaseInput.value.trim().replace(/\/$/, "");
-    apiBaseUrl = next;
-    localStorage.setItem("apiBaseUrl", next);
-    apiBaseStatus.textContent = next
-      ? `API set to ${next}`
-      : "API reset to same-origin.";
-    try {
-      await fetchSubmissions();
-    } catch (_error) {
-      apiBaseStatus.textContent =
-        "Saved, but API check failed. Verify Render URL and CORS.";
-    }
-  });
-}
 
 fetchSubmissions();
 fetchCountries();

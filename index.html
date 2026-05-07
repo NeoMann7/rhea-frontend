@@ -105,20 +105,6 @@
     </main>
 
     <section class="card qr-card">
-      <h2>Deployment API Target (for Vercel + Render)</h2>
-      <p class="small-text">
-        If frontend is on Vercel and backend is on Render, paste your Render
-        backend URL (example: <code>https://your-api.onrender.com</code>) and
-        save.
-      </p>
-      <div class="qr-controls">
-        <input id="apiBaseInput" type="url" placeholder="Render backend URL" />
-        <button id="saveApiBaseBtn" type="button">Save API URL</button>
-      </div>
-      <p id="apiBaseStatus" class="small-text"></p>
-    </section>
-
-    <section class="card qr-card">
       <h2>QR for Participants</h2>
       <p class="small-text">
         For public access, use your Vercel frontend URL (or local network URL).
@@ -133,11 +119,6 @@
         <button id="generateQrBtn" type="button">Generate QR</button>
       </div>
       <img id="qrImage" alt="QR code" />
-    </section>
-
-    <section class="card">
-      <h2>Recent Contributions</h2>
-      <div id="responses"></div>
     </section>
 
     <script
