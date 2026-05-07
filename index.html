@@ -27,18 +27,25 @@
         </p>
         <form id="responseForm">
           <label>
-            Country
+            1) What is your name?
             <input
               type="text"
-              name="country"
-              placeholder="e.g. India"
+              name="name"
+              placeholder="Your name"
               maxlength="100"
               required
             />
           </label>
 
           <label>
-            Institution / Organization
+            2) Country
+            <select name="country" id="countrySelect" required>
+              <option value="">Select your country</option>
+            </select>
+          </label>
+
+          <label>
+            3) What is your institution/organisation?
             <input
               type="text"
               name="institution"
@@ -49,27 +56,31 @@
           </label>
 
           <label>
-            1) Biggest climate adaptation challenge
+            4) What is the biggest climate adaptation challenge facing your
+            community today? (describe in 1-2 sentences)
             <textarea name="challenge" maxlength="350" required></textarea>
           </label>
 
           <label>
-            2) Role youth should play in national adaptation planning
+            5) What role is the youth playing in national adaptation planning
+            and implementation? (Elaborate in 1-2 sentences)
             <textarea name="youthRole" maxlength="350" required></textarea>
           </label>
 
           <label>
-            3) Adaptation solution youth are implementing/advocating
+            6) What adaptation solution, initiative, or action are young people
+            in your community implementing or advocating for?
             <textarea name="youthSolution" maxlength="350" required></textarea>
           </label>
 
           <label>
-            4) Most needed support to scale local youth-led adaptation
+            7) What support is most needed to scale up local adaptation efforts
+            led by youth?
             <textarea name="supportNeeded" maxlength="350" required></textarea>
           </label>
 
           <label>
-            5) One word describing climate adaptation in your community
+            8) One word that describes climate adaptation in your community
             <input
               type="text"
               name="oneWord"

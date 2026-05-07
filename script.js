@@ -2,6 +2,7 @@ const form = document.getElementById("responseForm");
 const formStatus = document.getElementById("formStatus");
 const responsesContainer = document.getElementById("responses");
 const responseCount = document.getElementById("responseCount");
+const countrySelect = document.getElementById("countrySelect");
 const qrInput = document.getElementById("qrInput");
 const qrImage = document.getElementById("qrImage");
 const generateQrBtn = document.getElementById("generateQrBtn");
@@ -47,10 +48,24 @@ function renderResponses(submissions) {
   responsesContainer.innerHTML = "";
   const latest = submissions.slice(0, 12);
 
+  const groupedByLocation = new Map();
   for (const item of submissions) {
-    const marker = L.marker([item.latitude, item.longitude]).addTo(map);
+    const key = `${item.latitude},${item.longitude}`;
+    if (!groupedByLocation.has(key)) groupedByLocation.set(key, []);
+    groupedByLocation.get(key).push(item);
+  }
+
+  for (const [, items] of groupedByLocation) {
+    const first = items[0];
+    const names = items
+      .map((entry) => entry.name || "Anonymous")
+      .filter(Boolean)
+      .slice(0, 10);
+    const namesList = names.map((name) => `<li>${escapeHtml(name)}</li>`).join("");
+
+    const marker = L.marker([first.latitude, first.longitude]).addTo(map);
     marker.bindPopup(
-      `<strong>${escapeHtml(item.country)}</strong><br/>${escapeHtml(item.institution)}<br/>One word: <em>${escapeHtml(item.oneWord)}</em>`
+      `<strong>${escapeHtml(first.country)}</strong><br/>Total responses: ${items.length}<br/><br/><strong>Names:</strong><ul>${namesList}</ul>`
     );
     markers.push(marker);
   }
@@ -59,7 +74,8 @@ function renderResponses(submissions) {
     const div = document.createElement("div");
     div.className = "response-card";
     div.innerHTML = `
-      <h3>${escapeHtml(item.country)} - ${escapeHtml(item.institution)}</h3>
+      <h3>${escapeHtml(item.name || "Anonymous")} - ${escapeHtml(item.country)}</h3>
+      <p><strong>Institution:</strong> ${escapeHtml(item.institution)}</p>
       <p><strong>Challenge:</strong> ${escapeHtml(item.challenge)}</p>
       <p><strong>Youth role:</strong> ${escapeHtml(item.youthRole)}</p>
       <p><strong>Solution:</strong> ${escapeHtml(item.youthSolution)}</p>
@@ -74,6 +90,27 @@ async function fetchSubmissions() {
   const res = await fetch(apiUrl("/api/submissions"));
   const data = await res.json();
   renderResponses(data.submissions || []);
+}
+
+async function fetchCountries() {
+  if (!countrySelect) return;
+  try {
+    const res = await fetch(apiUrl("/api/countries"));
+    const data = await res.json();
+    const countries = Array.isArray(data.countries) ? data.countries : [];
+
+    countrySelect.innerHTML = `<option value="">Select your country</option>`;
+    for (const country of countries) {
+      const option = document.createElement("option");
+      option.value = country;
+      option.textContent = country;
+      countrySelect.appendChild(option);
+    }
+  } catch (_error) {
+    formStatus.textContent =
+      "Could not load country list. Refresh and try again.";
+    formStatus.className = "error";
+  }
 }
 
 form.addEventListener("submit", async (event) => {
@@ -133,4 +170,5 @@ if (apiBaseInput && saveApiBaseBtn && apiBaseStatus) {
 }
 
 fetchSubmissions();
+fetchCountries();
 setInterval(fetchSubmissions, 15000);
