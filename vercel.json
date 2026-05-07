@@ -1,0 +1,10 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/", "destination": "/index.html" },
+    { "source": "/styles.css", "destination": "/styles.css" },
+    { "source": "/script.js", "destination": "/script.js" },
+    { "source": "/config.js", "destination": "/config.js" }
+  ]
+}
